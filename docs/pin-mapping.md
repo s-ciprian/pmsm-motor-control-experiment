@@ -1,14 +1,5 @@
 # Pin mapping — NUCLEO-G474RE ↔ BOOSTXL-DRV8323RHX
 
-> **STATUS: WORK IN PROGRESS — NOT YET VERIFIED ON HARDWARE.**
->
-> The header pin numbers below were gathered from web searches over the TI
-> and ST documents, **not** from a direct read of the PDFs. Treat every value
-> marked ⚠️ as **unconfirmed** until checked against the official schematics.
-> On the current-sense path a single wrong pin can destroy the power stage,
-> so the interposer board must be designed from the schematics **you** read,
-> using this table only as a starting point.
-
 ## Sources to cross-check
 
 - TI **SLAU732** — BOOSTXL-DRV8323Rx EVM User's Guide + schematic
@@ -17,10 +8,7 @@
   (Tables for CN5/CN6/CN8/CN9)
 - **DRV8323RH datasheet** — gain options (5/10/20/40 V/V) and PWM modes
 
-## Hardware-strapped values to read from the BoostXL schematic
-
-These three are the most important things to confirm **before any wiring**,
-because they go straight into MC Workbench:
+## Hardware-configured values to read from the BoostXL schematic
 
 | Parameter | Value (from SLAU732, via web) | Where to verify | What to set in MC Workbench |
 |-----------|-------------------------------|-----------------|-----------------------------|
@@ -28,13 +16,13 @@ because they go straight into MC Workbench:
 | Shunt resistor | **10 mΩ (0.01 Ω)** | R20 / R21 / R22 near phases | Enter **0.01 Ω** |
 | PWM mode | ⚠️ **3x vs 6x — UNCONFIRMED** | MODE pin strap | Must match the strap |
 
-> 🔴 **First critical check:** X-CUBE-MCSDK FOC normally uses **6x PWM**
+> ** X-CUBE-MCSDK FOC normally uses **6x PWM**
 > (independent high/low per leg). If the BoostXL is strapped for **3x**,
 > they are not compatible without changing one side. Read the MODE pin on the
 > schematic first and decide: re-strap to 6x on the interposer, or configure
 > MCSDK for 3x.
 
-## BoostXL header pinout (BoosterPack) — ⚠️ NUMBERS TO VERIFY
+## BoostXL header pinout (BoosterPack) — VERIFY
 
 | FOC function | BoostXL header (web — unconfirmed) |
 |--------------|-------------------------------------|
@@ -65,16 +53,6 @@ FOC-relevant pins, with the motor-control timer **TIM1** in mind:
 | A4 | PC1 | ADC |
 | A5 | PC0 | ADC |
 
-## Why the interposer board is essential (not just convenient)
-
-1. BoostXL PWM signals come out on **J4 (BoosterPack header)**, but the G4's
-   TIM1 PWM outputs are on **PA8/PA9/PA10 = D7/D8/D2 (Arduino header)**. These
-   do **not** land on the same physical pins → re-routing is required.
-2. The three current-sense outputs (SOA/B/C) must reach G4 ADC pins that are
-   correctly coupled for PWM-synchronized sampling. Keeping these traces short
-   (the interposer's job) reduces noise.
-3. The interposer is also where the **PWM mode (3x → 6x)** can be re-strapped
-   if the schematic shows it is needed.
 
 **Decoupling:** probably minimal, but put a **100 nF** close to each
 current-sense line at the ADC input — that is where it actually helps.

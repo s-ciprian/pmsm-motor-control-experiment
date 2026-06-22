@@ -20,7 +20,7 @@ Since 2023, the **Motor Control Workbench** runs as a plugin inside
 4. On first MC Workbench run, let it download the MC firmware package for the
    STM32G4 family.
 
-## Communication path for bring-up
+## Interface for Programming and Communication
 
-NUCLEO-G474RE has an on-board **ST-LINK V3** → flash + debug + the
-Motor Pilot link all go through the board's USB. No external probe needed.
+NUCLEO-G474RE has an on-board **ST-LINK V3** for flash and debug.
+Motor Pilot link all go through the board's USB.

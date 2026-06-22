@@ -16,7 +16,7 @@ on STM32G4 with a TI BoostXL-DRV8323RHX power stage.
 ## TODO
 
 Pin identification / mapping between NUCLEO-G474RE and BOOSTXL-DRV8323RHX.
-See [`docs/pin-mapping.md`](docs/pin-mapping.md).
+See [`docs/`](docs/).
 
 ## Documentation
 

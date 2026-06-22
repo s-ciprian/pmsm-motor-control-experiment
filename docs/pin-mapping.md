@@ -1,31 +1,39 @@
 # Pin mapping — NUCLEO-G474RE ↔ BOOSTXL-DRV8323RHX
 
+Board confirmed from schematic: **BOOSTXL-DRV8323RH** (MDBU017 Rev A),
+hardware interface (no SPI), input range **8–54 V**.
+
 ## Sources to cross-check
 
-- TI **SLAU732** — BOOSTXL-DRV8323Rx EVM User's Guide + schematic
-  (Table 4-1 "Header Pinout", GAIN0/1 straps, MODE strap, R20/R21/R22 shunts)
+- TI **SLAU732** — BOOSTXL-DRV8323Rx EVM User's Guide
+- BoostXL schematic **MDBU017A** (read directly — values below)
 - ST **UM2505** — NUCLEO-G474RE Arduino Uno V3 connector pinout
-  (Tables for CN5/CN6/CN8/CN9)
-- **DRV8323RH datasheet** — gain options (5/10/20/40 V/V) and PWM modes
+- **DRV8323RH datasheet** — gain options (5/10/20/40 V/V)
 
-## Hardware-configured values to read from the BoostXL schematic
+## Hardware-configured values
 
-| Parameter | Value (from SLAU732, via web) | Where to verify | What to set in MC Workbench |
-|-----------|-------------------------------|-----------------|-----------------------------|
-| CSA gain | **10 V/V** (GAIN1=H, GAIN0=L) | Schematic, GAIN0/GAIN1 pins | Enter **10 V/V** |
-| Shunt resistor | **10 mΩ (0.01 Ω)** | R20 / R21 / R22 near phases | Enter **0.01 Ω** |
-| PWM mode | ⚠️ **3x vs 6x — UNCONFIRMED** | MODE pin strap | Must match the strap |
+| Parameter | Value | Status | What to set in MC Workbench |
+|-----------|-------|--------|-----------------------------|
+| PWM mode | **6x PWM** (INHx/INLx separate) | ✅ confirmed from schematic | 6-PWM |
+| Shunt resistor | **0.007 Ω (7 mΩ)** (R6/R8/R10) | ✅ confirmed from schematic | Enter **0.007 Ω** |
+| CSA gain | 5 / 10 / 20 / 40 V/V | ⚠️ read GAIN0/1 straps | Enter the strapped value |
+| Input voltage range | 8–54 V | ✅ confirmed | — |
 
-> ** X-CUBE-MCSDK FOC normally uses **6x PWM**
-> (independent high/low per leg). If the BoostXL is strapped for **3x**,
-> they are not compatible without changing one side. Read the MODE pin on the
-> schematic first and decide: re-strap to 6x on the interposer, or configure
-> MCSDK for 3x.
+> **PWM mode resolved:** the schematic shows separate INHA/INLA, INHB/INLB,
+> INHC/INLC inputs → **6x PWM**, fully compatible with X-CUBE-MCSDK FOC.
+> A "Direct 1PWM Option" strap also exists but is not used here.
 
-## BoostXL header pinout (BoosterPack) — VERIFY
+## Current-sense path notes (from schematic)
 
-| FOC function | BoostXL header (web — unconfirmed) |
-|--------------|-------------------------------------|
+- Phase shunts **R6/R8/R10 = 0.007 Ω** on SPx/SNx.
+- Differential CSA outputs go through **low-pass filters placed near the BP
+  headers** (R18/R20 + C14/C15/C16 = 2200 pF) → SOA/SOB/SOC.
+- DC-bus (VDRAIN) sense divider: **R28 82 kΩ / R32 4.99 kΩ** → VSENVM.
+
+## BoostXL header pinout (BoosterPack) — VERIFY against schematic J1–J4
+
+| FOC function | BoostXL header (to confirm) |
+|--------------|------------------------------|
 | PWM A / B / C | J4.13 / J4.14 / J4.31 |
 | Current sense SOA / SOB / SOC | J1.4 / J1.5 / J1.6 |
 | DC bus voltage sense | J1.2 |
@@ -52,7 +60,6 @@ FOC-relevant pins, with the motor-control timer **TIM1** in mind:
 | A3 | **PB0** | ADC (current sense) |
 | A4 | PC1 | ADC |
 | A5 | PC0 | ADC |
-
 
 **Decoupling:** probably minimal, but put a **100 nF** close to each
 current-sense line at the ADC input — that is where it actually helps.

@@ -26,8 +26,9 @@
 | Use in MC Workbench | Encoder (quadrature) feedback | set 2000 CPR |
 
 
-## Power stage strap values (see docs/pin-mapping.md)
+## Power stage values (confirmed — see docs/pin-mapping.md)
 
-- CSA gain: **10 V/V?** (verify on schematic)
-- Shunt: **0.01 Ω?** (verify on schematic)
-- PWM mode: **3x vs 6x — confirm on schematic**
+- CSA gain: **10 V/V** (R22 = 47 kΩ tied to AGND, per DRV8323 datasheet)
+- Shunt: **0.007 Ω** (R6/R8/R10)
+- PWM mode: **6x PWM**
+- Input voltage range: 8–54 V

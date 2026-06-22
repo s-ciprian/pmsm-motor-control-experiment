@@ -21,5 +21,4 @@ See [`docs/`](docs/).
 ## Documentation
 
 - [`docs/st-software-setup.md`](docs/st-software-setup.md) — ST tools to install and in what order
-- [`docs/pin-mapping.md`](docs/pin-mapping.md) — NUCLEO-G474RE ↔ BoostXL pin map (work in progress)
 - [`docs/motor-params.md`](docs/motor-params.md) — motor / encoder parameters for MC Workbench

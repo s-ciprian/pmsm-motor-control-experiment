@@ -8,16 +8,29 @@ hardware interface (no SPI), input range **8–54 V**.
 - TI **SLAU732** — BOOSTXL-DRV8323Rx EVM User's Guide
 - BoostXL schematic **MDBU017A** (read directly — values below)
 - ST **UM2505** — NUCLEO-G474RE Arduino Uno V3 connector pinout
-- **DRV8323RH datasheet** — gain options (5/10/20/40 V/V)
+- **DRV8323 datasheet** — current sense amplifier gain table
 
-## Hardware-configured values
+## Hardware-configured values (all confirmed from schematic + datasheet)
 
 | Parameter | Value | Status | What to set in MC Workbench |
 |-----------|-------|--------|-----------------------------|
 | PWM mode | **6x PWM** (INHx/INLx separate) | ✅ confirmed from schematic | 6-PWM |
 | Shunt resistor | **0.007 Ω (7 mΩ)** (R6/R8/R10) | ✅ confirmed from schematic | Enter **0.007 Ω** |
-| CSA gain | 5 / 10 / 20 / 40 V/V | ⚠️ read GAIN0/1 straps | Enter the strapped value |
+| CSA gain | **10 V/V** | ✅ confirmed | Enter **10 V/V** |
 | Input voltage range | 8–54 V | ✅ confirmed | — |
+
+> **CSA gain resolved:** GAIN pin (DRV8323 pin 32) has **R22 = 47 kΩ tied to
+> AGND**. Per the DRV8323 datasheet (Current Sense Amplifier, H/W Device):
+> *GAIN = 47 kΩ ±5% tied to AGND → 10 V/V*. (Web search wrongly said 20 V/V;
+> the datasheet is authoritative.)
+>
+> DRV8323RH H/W gain table for reference:
+> | GAIN pin | Gain |
+> |----------|------|
+> | Tied to AGND (0 Ω) | 5 V/V |
+> | **47 kΩ to AGND** | **10 V/V** |
+> | Hi-Z (open) | 20 V/V |
+> | Tied to DVDD | 40 V/V |
 
 > **PWM mode resolved:** the schematic shows separate INHA/INLA, INHB/INLB,
 > INHC/INLC inputs → **6x PWM**, fully compatible with X-CUBE-MCSDK FOC.
